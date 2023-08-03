@@ -1,19 +1,22 @@
 import uuid
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from flask_pymongo import PyMongo
+import pymongo
 from bson.objectid import ObjectId
 import os
 from dotenv import load_dotenv
+import pymongo
 
 load_dotenv()
 mongodb_uri = os.getenv("MONGODB_URI")
-app = Flask(__name__)
-CORS(app)
-app.config['MONGO_URI'] = mongodb_uri
-mongo = PyMongo(app)
 
-print
+app = Flask(__name__)
+
+CORS(app)
+# app.config['MONGO_URI'] = mongodb_uri
+myclient = pymongo.MongoClient(mongodb_uri)
+# mongo = PyMongo(app)
+
 @app.route('/save', methods=['POST'])
 def save():
     data = request.get_json()
@@ -40,8 +43,8 @@ def save():
     optionvariables = data.get('optionvariable')
     if len(unique_id)>0:
         # If unique_id exists, perform the update
-        questions_collection = mongo.db.questions
-        helper_variables = mongo.db.Helper_variables
+        questions_collection = mongo.db.Questions
+        helper_variables = mongo.db.HelperVariables
         questions_collection.update_one(
             {'Unique_id': unique_id},
             {
@@ -82,8 +85,8 @@ def save():
     else:
         # If unique_id is not present, generate a new one and insert a new record
         unique_id = str(uuid.uuid4())
-        questions_collection = mongo.db.questions
-        helper_variables = mongo.db.Helper_variables
+        questions_collection = mongo.db.Questions
+        helper_variables = mongo.db.HelperVariables
         questions_collection.insert_one({
             'Ques_name': quesname,
             'Unique_id': unique_id,
@@ -115,14 +118,31 @@ def save():
 
 @app.route('/get_variables', methods=['GET'])
 def get_variables():
-    questions_collection = mongo.db.questions
-    variables = list(questions_collection.find({}, {'_id': False}))
-    return jsonify(variables)
+    print("inside getvariables")
+    try:
+        # questions_collection = mongo.db.Questions
+        mydb = myclient["question_generator"]
+        print(mydb)
+        mycol = mydb["Questions"]
+        print(mycol)
+        # variables = list(questions_collection.find({}, {'_id': False}))
+        variables = list(mycol.find({}, {'_id': False}))
+        print(variables)
+    except pymongo.errors.ServerSelectionTimeoutError as e:
+        print(f"Error: {e}")
+    except pymongo.errors.CursorNotFound as e:
+        print("The cursor was not found. It might have expired or closed:", e)
+    except Exception as e:
+        print("An unexpected error occurred:", e)
+    print("after question collection")
+
+    # return jsonify(variables)
+    return jsonify("hello")
 
 @app.route('/get_data/<string:id>', methods=['GET'])
 def get_data_by_id(id):
-    questions_collection = mongo.db.questions
-    helper_variables = mongo.db.Helper_variables
+    questions_collection = mongo.db.Questions
+    helper_variables = mongo.db.HelperVariables
     document = (questions_collection.find_one({'Unique_id': id}))
     document1 = (helper_variables.find_one({'Unique_id': id}))
     if document:
@@ -134,7 +154,7 @@ def get_data_by_id(id):
 
 @app.route('/delete', methods=['DELETE'])
 def delete():
-    questions_collection = mongo.db.questions
+    questions_collection = mongo.db.Questions
     data = request.get_json()
     id = data.get('Unique_id')
 
@@ -142,4 +162,4 @@ def delete():
     return jsonify("deleted")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=7070)
