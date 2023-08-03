@@ -136,8 +136,7 @@ def get_variables():
         print("An unexpected error occurred:", e)
     print("after question collection")
 
-    # return jsonify(variables)
-    return jsonify("hello")
+    return jsonify(variables)
 
 @app.route('/get_data/<string:id>', methods=['GET'])
 def get_data_by_id(id):
@@ -162,4 +161,4 @@ def delete():
     return jsonify("deleted")
 
 if __name__ == '__main__':
-    app.run(debug=True, port=7070)
+    app.run(debug=True)
