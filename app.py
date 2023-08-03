@@ -15,6 +15,7 @@ app = Flask(__name__)
 CORS(app)
 # app.config['MONGO_URI'] = mongodb_uri
 myclient = pymongo.MongoClient(mongodb_uri)
+mydb = myclient["question_generator"]
 # mongo = PyMongo(app)
 
 @app.route('/save', methods=['POST'])
@@ -43,8 +44,8 @@ def save():
     optionvariables = data.get('optionvariable')
     if len(unique_id)>0:
         # If unique_id exists, perform the update
-        questions_collection = mongo.db.Questions
-        helper_variables = mongo.db.HelperVariables
+        questions_collection = mydb["Questions"]
+        helper_variables = mydb["HelperVariables"]
         questions_collection.update_one(
             {'Unique_id': unique_id},
             {
@@ -85,8 +86,8 @@ def save():
     else:
         # If unique_id is not present, generate a new one and insert a new record
         unique_id = str(uuid.uuid4())
-        questions_collection = mongo.db.Questions
-        helper_variables = mongo.db.HelperVariables
+        questions_collection = mydb["Questions"]
+        helper_variables = mydb["HelperVariables"]
         questions_collection.insert_one({
             'Ques_name': quesname,
             'Unique_id': unique_id,
@@ -121,13 +122,10 @@ def get_variables():
     print("inside getvariables")
     try:
         # questions_collection = mongo.db.Questions
-        mydb = myclient["question_generator"]
-        print(mydb)
-        mycol = mydb["Questions"]
-        print(mycol)
+        questions_collection = mydb["Questions"]
+        helper_variables = mydb["HelperVariables"]
         # variables = list(questions_collection.find({}, {'_id': False}))
-        variables = list(mycol.find({}, {'_id': False}))
-        print(variables)
+        variables = list(questions_collection.find({}, {'_id': False}))
     except pymongo.errors.ServerSelectionTimeoutError as e:
         print(f"Error: {e}")
     except pymongo.errors.CursorNotFound as e:
@@ -140,8 +138,8 @@ def get_variables():
 
 @app.route('/get_data/<string:id>', methods=['GET'])
 def get_data_by_id(id):
-    questions_collection = mongo.db.Questions
-    helper_variables = mongo.db.HelperVariables
+    questions_collection = mydb["Questions"]
+    helper_variables = mydb["HelperVariables"]
     document = (questions_collection.find_one({'Unique_id': id}))
     document1 = (helper_variables.find_one({'Unique_id': id}))
     if document:
@@ -153,11 +151,13 @@ def get_data_by_id(id):
 
 @app.route('/delete', methods=['DELETE'])
 def delete():
-    questions_collection = mongo.db.Questions
+    questions_collection = mydb["Questions"]
+    helper_variables = mydb["HelperVariables"]
     data = request.get_json()
     id = data.get('Unique_id')
 
     result = questions_collection.delete_one({'Unique_id': id})
+    result1 = helper_variables.delete_one({'Unique_id': id})
     return jsonify("deleted")
 
 if __name__ == '__main__':
