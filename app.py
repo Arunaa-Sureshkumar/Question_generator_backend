@@ -42,6 +42,12 @@ def save():
     pervariables = data.get('pervariables')
     logvariables = data.get('logvariables')
     optionvariables = data.get('optionvariable')
+    types = data.get('type')
+    subtype = data.get('subtype')
+    difficulty = data.get('difficulty')
+    subtopic = data.get('topic')
+    tags = data.get('tags')
+    print(types,subtype,difficulty,subtopic)
     if len(unique_id)>0:
         # If unique_id exists, perform the update
         questions_collection = mydb["Questions"]
@@ -50,6 +56,11 @@ def save():
             {'Unique_id': unique_id},
             {
                 '$set': {
+                    'Ques_type': types,
+                    'Ques_subtype': subtype,
+                    'Difficulty': difficulty,
+                    'Subtopic': subtopic,
+                    'Tags': tags,
                     'Ques_name': quesname,
                     'Question': ques,
                     'Solution': soln,
@@ -63,6 +74,11 @@ def save():
             {'Unique_id': unique_id},
             {
                 '$set': {
+                    'Ques_type': types,
+                    'Ques_subtype': subtype,
+                    'Difficulty': difficulty,
+                    'Subtopic': subtopic,
+                    'Tags': tags,
                     'Ques_name': quesname,
                     'Unique_id': unique_id,
                     'optionvariables': optionvariables,
@@ -89,6 +105,11 @@ def save():
         questions_collection = mydb["Questions"]
         helper_variables = mydb["HelperVariables"]
         questions_collection.insert_one({
+            'Ques_type': types,
+            'Ques_subtype': subtype,
+            'Difficulty': difficulty,
+            'Subtopic': subtopic,
+            'Tags': tags,
             'Ques_name': quesname,
             'Unique_id': unique_id,
             'Question': ques,
