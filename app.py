@@ -44,10 +44,10 @@ def save():
     optionvariables = data.get('optionvariable')
     types = data.get('type')
     subtype = data.get('subtype')
+    quescode = data.get('quescode')
     difficulty = data.get('difficulty')
-    subtopic = data.get('topic')
     tags = data.get('tags')
-    print(types,subtype,difficulty,subtopic)
+    editorval = data.get('editorval')
     if len(unique_id)>0:
         # If unique_id exists, perform the update
         questions_collection = mydb["Questions"]
@@ -56,10 +56,11 @@ def save():
             {'Unique_id': unique_id},
             {
                 '$set': {
+                    'editval': editorval,
+                    'Code': quescode,
                     'Ques_type': types,
                     'Ques_subtype': subtype,
                     'Difficulty': difficulty,
-                    'Subtopic': subtopic,
                     'Tags': tags,
                     'Ques_name': quesname,
                     'Question': ques,
@@ -74,10 +75,11 @@ def save():
             {'Unique_id': unique_id},
             {
                 '$set': {
+                    'editval': editorval,
+                    'Code': quescode,
                     'Ques_type': types,
                     'Ques_subtype': subtype,
                     'Difficulty': difficulty,
-                    'Subtopic': subtopic,
                     'Tags': tags,
                     'Ques_name': quesname,
                     'Unique_id': unique_id,
@@ -94,7 +96,7 @@ def save():
                     'cube': { '$each': cubevariables },
                     'fact': { '$each': factvariables },
                     'percentage': { '$each': pervariables },
-                    'log': { '$each': logvariables },  
+                    'log': { '$each': logvariables },
                 }
             }
         )
@@ -105,10 +107,11 @@ def save():
         questions_collection = mydb["Questions"]
         helper_variables = mydb["HelperVariables"]
         questions_collection.insert_one({
+            'editval': editorval,
+            'Code': quescode,
             'Ques_type': types,
             'Ques_subtype': subtype,
             'Difficulty': difficulty,
-            'Subtopic': subtopic,
             'Tags': tags,
             'Ques_name': quesname,
             'Unique_id': unique_id,
