@@ -41,6 +41,7 @@ def save():
     diffvariables = data.get('diffvariables')
     pervariables = data.get('pervariables')
     logvariables = data.get('logvariables')
+    fracvariables = data.get('fracvariables')
     optionvariables = data.get('optionvariable')
     types = data.get('type')
     subtype = data.get('subtype')
@@ -97,6 +98,7 @@ def save():
                     'fact': { '$each': factvariables },
                     'percentage': { '$each': pervariables },
                     'log': { '$each': logvariables },
+                    'frac': { '$each': fracvariables },
                 }
             }
         )
@@ -137,6 +139,7 @@ def save():
             'difference': diffvariables,
             'percentage': pervariables,
             'log': logvariables,
+            'frac': fracvariables,
             'optionvariables': optionvariables,
         })
         return jsonify('Record inserted successfully')
