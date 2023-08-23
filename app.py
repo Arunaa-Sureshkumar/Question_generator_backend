@@ -48,7 +48,9 @@ def save():
     quescode = data.get('quescode')
     difficulty = data.get('difficulty')
     tags = data.get('tags')
-    editorval = data.get('editorval')
+    dvaractionsval = data.get('dvaractionsval') 
+    dvaractionvalues = data.get('dvaractionvalues')
+    loop = data.get('loop')
     if len(unique_id)>0:
         # If unique_id exists, perform the update
         questions_collection = mydb["Questions"]
@@ -57,7 +59,6 @@ def save():
             {'Unique_id': unique_id},
             {
                 '$set': {
-                    'editval': editorval,
                     'Code': quescode,
                     'Ques_type': types,
                     'Ques_subtype': subtype,
@@ -69,6 +70,9 @@ def save():
                     'Variables': variables,
                     'Options': options,
                     'Actions': actions,
+                    'Generate_actions': dvaractionsval,
+                    'Generate_action_val': dvaractionvalues,
+                    'Loop_num': loop,
                 }
             }
         )
@@ -76,7 +80,6 @@ def save():
             {'Unique_id': unique_id},
             {
                 '$set': {
-                    'editval': editorval,
                     'Code': quescode,
                     'Ques_type': types,
                     'Ques_subtype': subtype,
@@ -109,7 +112,6 @@ def save():
         questions_collection = mydb["Questions"]
         helper_variables = mydb["HelperVariables"]
         questions_collection.insert_one({
-            'editval': editorval,
             'Code': quescode,
             'Ques_type': types,
             'Ques_subtype': subtype,
@@ -121,7 +123,10 @@ def save():
             'Solution': soln,
             'Variables': variables,
             'Options': options,
-            'Actions': actions
+            'Actions': actions,
+            'Generate_actions': dvaractionsval,
+            'Generate_action_val': dvaractionvalues,
+            'Loop_num': loop,
         })
         helper_variables.insert_one({
             'Ques_name': quesname,
