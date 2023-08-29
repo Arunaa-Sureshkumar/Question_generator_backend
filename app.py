@@ -51,6 +51,7 @@ def save():
     dvaractionsval = data.get('dvaractionsval') 
     dvaractionvalues = data.get('dvaractionvalues')
     loop = data.get('loop')
+    correctoptionnum = data.get('correctoption')
     if len(unique_id)>0:
         # If unique_id exists, perform the update
         questions_collection = mydb["Questions"]
@@ -73,6 +74,7 @@ def save():
                     'Generate_actions': dvaractionsval,
                     'Generate_action_val': dvaractionvalues,
                     'Loop_num': loop,
+                    'Correct_option': correctoptionnum,
                 }
             }
         )
@@ -127,6 +129,7 @@ def save():
             'Generate_actions': dvaractionsval,
             'Generate_action_val': dvaractionvalues,
             'Loop_num': loop,
+            'Correct_option': correctoptionnum,
         })
         helper_variables.insert_one({
             'Ques_name': quesname,
